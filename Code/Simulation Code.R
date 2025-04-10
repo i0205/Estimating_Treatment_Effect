@@ -545,10 +545,10 @@ sim_fun=function(n=2000, #sample size in a single simulation
     #******************************************************************
     #Weighted ATE 
     #**************
-    est_mon_cost_ATE_diff_1_0[,m]= predict(G2_casestudy_ATE_MS,newdata=ms_diff_1_0, se.fit = T)$fit
+    est_mon_cost_ATE_diff_1_0[,m]= est_mon_cost_ATE_trt_1[,m] - est_mon_cost_ATE_trt_0[,m]
     #Unweighted Est
     #**************
-    est_mon_cost_unweighted_diff_1_0[,m]=predict(G2_casestudy_unweighted_MS,newdata=ms_diff_1_0, se.fit = T)$fit
+    est_mon_cost_unweighted_diff_1_0[,m]=est_mon_cost_unweighted_trt_1[,m] - est_mon_cost_unweighted_trt_0[,m]
     #Actual Cost
     #**************
     act_mon_cost_diff_1_0[,m]=aggregate(subset(data_gamma,TREATMENT==1)$MON_TOT_CHRG, 
@@ -566,10 +566,10 @@ sim_fun=function(n=2000, #sample size in a single simulation
     #******************************************************************
     #Weighted ATE 
     #**************
-    est_mon_cost_ATE_diff_2_1[,m]= predict(G2_casestudy_ATE_MS,newdata=ms_diff_2_1, se.fit = T)$fit
+    est_mon_cost_ATE_diff_2_1[,m]= est_mon_cost_ATE_trt_2[,m] - est_mon_cost_ATE_trt_1[,m]
     #Unweighted Est
     #**************
-    est_mon_cost_unweighted_diff_2_1[,m]=predict(G2_casestudy_unweighted_MS,newdata=ms_diff_2_1, se.fit = T)$fit
+    est_mon_cost_unweighted_diff_2_1[,m]=est_mon_cost_unweighted_trt_2[,m] - est_mon_cost_unweighted_trt_1[,m]
     #Actual Cost
     #**************
     act_mon_cost_diff_2_1[,m]=aggregate(subset(data_gamma,TREATMENT==2)$MON_TOT_CHRG, 
@@ -587,10 +587,10 @@ sim_fun=function(n=2000, #sample size in a single simulation
     #******************************************************************
     #Weighted ATE 
     #**************
-    est_mon_cost_ATE_diff_2_0[,m]= predict(G2_casestudy_ATE_MS,newdata=ms_diff_2_0, se.fit = T)$fit
+    est_mon_cost_ATE_diff_2_0[,m]= est_mon_cost_ATE_trt_2[,m] - est_mon_cost_ATE_trt_0[,m]
     #Unweighted Est
     #**************
-    est_mon_cost_unweighted_diff_2_0[,m]=predict(G2_casestudy_unweighted_MS,newdata=ms_diff_2_0, se.fit = T)$fit
+    est_mon_cost_unweighted_diff_2_0[,m]=est_mon_cost_unweighted_trt_2[,m] - est_mon_cost_unweighted_trt_0[,m]
     #Actual Cost
     #**************
     act_mon_cost_diff_2_0[,m]=aggregate(subset(data_gamma,TREATMENT==2)$MON_TOT_CHRG, 
@@ -679,7 +679,7 @@ sim_fun=function(n=2000, #sample size in a single simulation
 #                         SIMULATION RUN                                   ####
 #******************************************************************************
 set.seed(0707)
-data_F1_S1_Sig10=sim_fun(n=2000, #sample size in a single simulation
+Sim_data=sim_fun(n=2000, #sample size in a single simulation
                          months=24, #study duration in months
                          delta_e=c(0,1,-1,0), #for survival time
                          delta_1=c(2,1,2,1), #for Trt 1 selection
@@ -693,4 +693,4 @@ data_F1_S1_Sig10=sim_fun(n=2000, #sample size in a single simulation
                          )
 
 #Saving on Simulation dataset for reference
-mon_data=data_F1_S1_Sig10$sim_mon_cost_data
+mon_data=Sim_data$sim_mon_cost_data
