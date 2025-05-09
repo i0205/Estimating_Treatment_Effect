@@ -146,8 +146,8 @@ data_sim_results=list( est_mon_cost_iptw_trt_0 ,est_mon_cost_no_iptw_trt_0 ,true
 #                         COST PLOTS                               ####
 #******************************************************************************
 
-setwd("/Users/indranil/Desktop/UoL/University Stuff/PhD work/Proj 1/Data/R/OUTPUT")
-pdf("Simu_Study_Plot.pdf",height = 8,width = 10)
+setwd("<path>")
+pdf("<nam>.pdf",height = 8,width = 10)
 
 layout(matrix(c(1:6), ncol=2, byrow = F), heights=c(1,1,1))
 # A:
