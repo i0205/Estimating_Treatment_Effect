@@ -1,6 +1,5 @@
 library(splines2)
-library(mgcv)
-library(glmc)
+library(glmnet)
 
 #******************************************************************************
 #******************************************************************************
@@ -118,40 +117,41 @@ sim_fun=function(n=2000, #sample size in a single simulation
                                                           Delta_t_2(t)*(Ft(t, time) + abs(s_error)))), #trt=2 
                                             0)
       #calculating true monthly treatment under treatment
-      ACC_TOT_DATA[k,"TRUE_MON_TOT_CHRG_0"]=ifelse(t<=time_cont_trt2,Ft(t,time_cont_trt2) ,0) #trt=0
-      ACC_TOT_DATA[k,"TRUE_MON_TOT_CHRG_1"]=ifelse(t<=time_trt1,Delta_t_1(t)*Ft(t,time_trt1),0) #trt=1: +6 months of survival
-      ACC_TOT_DATA[k,"TRUE_MON_TOT_CHRG_2"]=ifelse(t<=time_cont_trt2,Delta_t_2(t)*Ft(t,time_cont_trt2),0) #trt=2
+      ACC_TOT_DATA[k,"TRUE_MON_TOT_CHRG_0"]=ifelse(t<=time_cont_trt2,Ft(t,time_cont_trt2) + abs(s_error),0) #trt=0
+      ACC_TOT_DATA[k,"TRUE_MON_TOT_CHRG_1"]=ifelse(t<=time_trt1,Delta_t_1(t)*Ft(t,time_trt1)+ abs(s_error),0) #trt=1: +6 months of survival
+      ACC_TOT_DATA[k,"TRUE_MON_TOT_CHRG_2"]=ifelse(t<=time_cont_trt2,Delta_t_2(t)*Ft(t,time_cont_trt2)+ abs(s_error),0) #trt=2
     }
   }
   
   #Creating all months data
   #*********************************
-  dummy_data=sim_X[rep(seq_len(nrow(sim_X)), each=months+1),]
-  dummy_data$MONTH=rep(c(0:months),length(unique(dummy_data$PATIENT_ID)))
+  dummy_data=sim_X[rep(seq_len(nrow(sim_X)), each=months),]
+  dummy_data$MONTH=rep(c(1:months),length(unique(dummy_data$PATIENT_ID)))
   
-  sim_monthly_X=merge(dummy_data,subset(ACC_TOT_DATA, select = -c(TREATMENT)), by=c("PATIENT_ID","MONTH"), 
+  sim_monthly_X_=merge(dummy_data,subset(ACC_TOT_DATA, select = -c(TREATMENT)), by=c("PATIENT_ID","MONTH"), 
                       all.x = TRUE)
+  sim_monthly_X=sim_monthly_X_[order(sim_monthly_X_$PATIENT_ID, sim_monthly_X_$MONTH),]
   sim_monthly_X[is.na(sim_monthly_X)] <- 0
   
   #Simulated Accumulative Cost
   #*********************************
-  for (i in 1:n) {
-    for (t in 1:(months + 1)) {
-      l=(i-1)*(months + 1) + t #index for calculation
+    for (i in 1:n) {
+    for (t in 1:months) {
+      l=(i-1)*(months) + t #index for calculation
       
-      sim_monthly_X$ACC_TOT_CHRG[l]=ifelse(sim_monthly_X$MONTH[l]==0,
+      sim_monthly_X$ACC_TOT_CHRG[l]=ifelse(sim_monthly_X$MONTH[l]==min(sim_monthly_X$MONTH),
                                            sim_monthly_X$MON_TOT_CHRG[l],
                                            sim_monthly_X$MON_TOT_CHRG[l] + sim_monthly_X$ACC_TOT_CHRG[l-1])
       
-      sim_monthly_X$TRUE_ACC_TOT_CHRG_0[l]=ifelse(sim_monthly_X$MONTH[l]==0,
+      sim_monthly_X$TRUE_ACC_TOT_CHRG_0[l]=ifelse(sim_monthly_X$MONTH[l]==min(sim_monthly_X$MONTH),
                                                   sim_monthly_X$TRUE_MON_TOT_CHRG_0[l],
                                                   sim_monthly_X$TRUE_MON_TOT_CHRG_0[l] + sim_monthly_X$TRUE_ACC_TOT_CHRG_0[l-1])
       
-      sim_monthly_X$TRUE_ACC_TOT_CHRG_1[l]=ifelse(sim_monthly_X$MONTH[l]==0,
+      sim_monthly_X$TRUE_ACC_TOT_CHRG_1[l]=ifelse(sim_monthly_X$MONTH[l]==min(sim_monthly_X$MONTH),
                                                   sim_monthly_X$TRUE_MON_TOT_CHRG_1[l],
                                                   sim_monthly_X$TRUE_MON_TOT_CHRG_1[l] + sim_monthly_X$TRUE_ACC_TOT_CHRG_1[l-1])
       
-      sim_monthly_X$TRUE_ACC_TOT_CHRG_2[l]=ifelse(sim_monthly_X$MONTH[l]==0,
+      sim_monthly_X$TRUE_ACC_TOT_CHRG_2[l]=ifelse(sim_monthly_X$MONTH[l]==min(sim_monthly_X$MONTH),
                                                   sim_monthly_X$TRUE_MON_TOT_CHRG_2[l],
                                                   sim_monthly_X$TRUE_MON_TOT_CHRG_2[l] + sim_monthly_X$TRUE_ACC_TOT_CHRG_2[l-1])
     }
@@ -168,7 +168,8 @@ sim_fun=function(n=2000, #sample size in a single simulation
 #.                        FUNCTION 2: ATE ESTIMATION MODEL ####
 #******************************************************************************
 #******************************************************************************
-# Note: Update return list for change in number of treatments
+# Note: Update return list and treatment specific variables 
+#       for change in number of treatments.
 #******************************************************************************
 # INPUT: The in-dataset must have the following variables:
 # PATIENT_ID, MONTH, TREATMENT, ps_weights, no_weight(assign 1 for all values), 
@@ -179,7 +180,9 @@ sim_fun=function(n=2000, #sample size in a single simulation
 
 ATE_IPTW_FUNC=function(in_data=data_per_month, #data_per_month;
                         iptw=1, #1 for Yes ;
-                        acc_mon='MON' #ACC or MON;
+                        acc_mon='MON', #ACC or MON;
+                       knot_gap=2, #smoothing value for knot seq
+                       lambda='best' # provide single value for use instead
                       ){
 
 #******************************************************************************
@@ -190,91 +193,105 @@ knot_start=min(in_data$MONTH)+1
 knot_end=max(in_data$MONTH)-1
 
 #Beta I-pline
-if (acc_mon=='ACC'){
-    spline_beta=iSpline(x=in_data$MONTH, df = NULL, 
-                  knots = c(knot_start:knot_end), degree = 3L,intercept = T)  
-  } else {
-    spline_beta=mSpline(x=in_data$MONTH, df = NULL, 
-                  knots = c(knot_start:knot_end), degree = 3L,intercept = T)                   
-  }
-spline_est=data.frame(spline_beta)
-colnames(spline_est) = paste0("Beta",colnames(spline_beta))
-
-#Adding Gamma_i I-splines for additional treament; Control=0
+spline_beta=iSpline(x=in_data$MONTH, df = NULL, 
+                    knots = seq(knot_start, knot_end,knot_gap), 
+                    degree = 3L,intercept = F)  
+spline_beta=data.frame(1, spline_beta)
+colnames(spline_beta) = paste0("Beta",(1:ncol(spline_beta)))
+spline_est=spline_beta
+#Adding Gamma_i I-splines for additional treatment; Control=0
 trt_val=sort(unique(in_data$TREATMENT))
   for (i in trt_val[2:length(trt_val)]) {
     spline_val=ifelse(in_data$TREATMENT==i, 1, 0)*spline_beta
     colnames(spline_val) = paste0("Gamma_",i,"_",1:ncol(spline_val))
     spline_est=cbind(spline_est, spline_val)
-    # assign(paste0("spline_gamma_", i), spline_val)
   }
 
 #******************************************************************************
-#. STEP 2: GAM_est Model####
+#. STEP 2: GLMNET Model####
 #******************************************************************************
 
 #IPTW/ No Weights
-if (iptw==1){weigts=in_data$ps_weights} else {weigts=in_data$no_weight}
+if (iptw==1){WEIGHTS=in_data$ps_weights} else{WEIGHTS=in_data$no_weight}
 
-#ACCUMULATIVE/MONTHLY Cost
-if (acc_mon=='ACC'){cost_var=in_data$ACC_TOT_CHRG
-}               else {cost_var=in_data$MON_TOT_CHRG}
+  cost_var=in_data$ACC_TOT_CHRG
+  glm_X=as.matrix(spline_est)
 
-
-#Final Data for Model
-gam_data=data.frame(cbind(PATIENT_ID=in_data$PATIENT_ID, MONTH=in_data$MONTH, 
-                          iptw, cost_var, spline_est))
-
-## Create a formula for a model:
-(fmla <- as.formula(paste("cost_var ~", paste(colnames(spline_est), collapse= "+"))))
-
-GAM_est<- gam(fmla, method = "REML",  weights = weigts ,
-                 correlation = corARMA(form = ~ MONTH|PATIENT_ID, 
-                                       p = 1), data=gam_data)
+  # Cross-validation to select lambda/provided lambda
+  if ((lambda)=='best' ){
+    cv_fit <- cv.glmnet(y=cost_var, x=glm_X, alpha = 0, weights = WEIGHTS)
+    best_lambda <- cv_fit$lambda.min
+  } else { 
+    best_lambda<- lambda
+    }
+  
+  # Fit the weighted ridge regression model
+  GLMnet_est=glmnet(y=cost_var, x=glm_X, alpha = 0, weights = WEIGHTS, 
+                 lambda = best_lambda)
 
 #******************************************************************************
-#. STEP 3: Estimations####
+#. STEP 3: Prediction ####
 #******************************************************************************
 
-#Choosing correct Spline
-if (acc_mon=='ACC'){
-  spln=iSpline(x=c(0:max(in_data$MONTH)), df = NULL, 
-               knots = c(knot_start:knot_end), degree = 3L,intercept = T)  
-} else {
-  spln=mSpline(x=c(0:max(in_data$MONTH)), df = NULL, 
-               knots = c(knot_start:knot_end), degree = 3L,intercept = T) 
-}
-
+#Total Trt
 trt_val=sort(unique(in_data$TREATMENT))
-contrl_est=data.frame(cbind(spln, matrix(data=0,nrow=nrow(spln), ncol=(length(trt_val)-1)*ncol(spln))))
-colnames(contrl_est)=colnames(spline_est)
+  
+#Choosing I-Spline for accumulative prediction
+#********************************************
 
-#Estimate for Control
+spln=iSpline(x=c(1:max(in_data$MONTH)), df = NULL, 
+               knots = seq(knot_start, knot_end,knot_gap), degree = 3L,intercept = F) 
+spln=cbind(1,spln)
+#Prediction for Control
 #**************
-est_trt_0= predict(GAM_est,newdata=contrl_est, se.fit = T)$fit
-std_trt_0= predict(GAM_est,newdata=contrl_est, se.fit = T)$se.fit
-
-#Estimate for Treatments
+# Pred dataset
+contrl_est=data.frame(cbind(spln, matrix(data=0,nrow=nrow(spln), 
+                      ncol=(length(trt_val)-1)*ncol(spln))))
+colnames(contrl_est)=colnames(spline_est)
+  
+  pred_data=data.frame(predict(GLMnet_est,newx=as.matrix(contrl_est), 
+                                          s = best_lambda))
+  colnames(pred_data)=c("est_trt_0")
+#Prediction for Treatments
 #**************
 for (i in trt_val[2:length(trt_val)]) {
+  # Pred
   trt_est=data.frame(contrl_est)
-  trt_est[,(i*ncol(spln)+1):((i+1)*ncol(spln))] =data.frame(spln)
-
-   estimate= predict(GAM_est,newdata=trt_est, se.fit = T)$fit
-   assign(paste0("est_trt_", i), estimate)
-   std= predict(GAM_est,newdata=trt_est, se.fit = T)$se.fit
-   assign(paste0("std_trt_", i), std)
-   
-  }  
+ trt_est[,(i*ncol(spln)+1):((i+1)*ncol(spln))] =data.frame(spln) #Spline
+    
+  estimate= data.frame(predict(GLMnet_est,newx=as.matrix(trt_est), 
+                               s = best_lambda))
+   colnames(estimate)=c(paste0("est_trt_",i))
+ 
+  pred_data=cbind(pred_data,estimate)
+}  
+#Prediction for Differences between Trts
+#****************************
+for (i in trt_val[2:length(trt_val)]) {
+  for (j in trt_val[1:i]) {
+  # Pred dataset
+  estimate_diff=data.frame(pred_data[,i+1]-pred_data[,j+1])
+  colnames(estimate_diff)=c(paste0("est_diff_",i,"_vs_",j))
+  pred_data=cbind(pred_data,estimate_diff)
+  }
+}
+  
+#Monthly Cost prediction
+#********************************************
+  if (acc_mon=='MON'){
+#Acc difference is monthly cost
+  pred_data_mon=pred_data
+  pred_data_mon=pred_data[1,]
+  for (i in 2:nrow(pred_data)) {
+    pred_data_mon[i,]=pred_data[i,]-pred_data[i-1,]
+    }
+  pred_data=pred_data_mon
+  }
+  
+  #Outing best lambda
+  pred_data=cbind(pred_data, best_lambda=best_lambda)
 #end of loop 
-return(list(
-  est_trt_0=est_trt_0,
-  est_trt_1=est_trt_1,
-  est_trt_2=est_trt_2,
-  std_trt_0=std_trt_0,
-  std_trt_1=std_trt_1,
-  std_trt_2=std_trt_2
-))
+return( pred_data=pred_data)
 }
 
 
@@ -289,10 +306,11 @@ return(list(
 plot_func=function(obs_data=obs_cost,
                          est_no_iptw=est_cost_no_IPTW,
                          est_iptw=est_cost_IPTW,
-                         tot_mon=c(0:24),title=c("Plot"), 
+                         tot_mon=c(1:24),title=c("Plot"), 
                          ylim=c(0,2000), y_lab="Cost Diff ($)",
-                         std_iptw=std_iptw,
                          CI_IPTW=1, # 1 for Yes;
+                         std_iptw=std_cost_IPTW,
+                         no_IPTW=1, # 1 for Yes;
                          h_abl=0 # 1 for abline-h;
                          ){
   par(mar = c(5,5,4,2))
@@ -305,19 +323,13 @@ plot_func=function(obs_data=obs_cost,
         ylim=ylim,
         yaxt="none",xaxt="none", cex.lab=2, cex.main=2)
   #If cost difference;
-  if (h_abl==1){
     axis(2, at = c(ylim[1],0,ylim[2]), 
        labels =  c(paste0(ylim[1]/1000,"K"), "0K",paste0(ylim[2]/1000,"K")), 
        cex.axis=2)
     axis(1, at = c(1,6,12,18,24), labels =c(1,6,12,18,24), cex.axis=2)
-    abline(h=0, col="gray",lty=2,lwd=1)
-  } else {
-    axis(2, at = c(max(0,ylim[1]),mean(ylim),ylim[2]), 
-         labels =  c(paste0(max(0,ylim[1])/1000,"K"),
-                     paste0(mean(ylim)/1000,"K"),paste0(ylim[2]/1000,"K")), 
-         cex.axis=2)
-    axis(1, at = c(1,6,12,18,24), labels =c(1,6,12,18,24), cex.axis=2)
-  }
+    if (h_abl==1){
+      abline(h=0, col="gray",lty=2,lwd=1)
+      }
   
   #Estimation with IPTW
   lines(tot_mon,est_iptw, lwd=2,col="red",lty=2) 
@@ -327,12 +339,11 @@ plot_func=function(obs_data=obs_cost,
     ci_L_iptw= est_iptw - 2*std_iptw
     ci_U_iptw= est_iptw + 2*std_iptw
     
-    lines(tot_mon,ci_L_iptw, lwd=1,col="black",lty=2)
-    lines(tot_mon,ci_U_iptw, lwd=1,col="black",lty=2)
+    lines(tot_mon,ci_L_iptw, lwd=1,col="black",lty=3)
+    lines(tot_mon,ci_U_iptw, lwd=1,col="black",lty=3)
   } 
-  
-  #Estimation without IPTW
+  if (no_IPTW==1){  #Estimation without IPTW
   lines(tot_mon,est_no_iptw, lwd=4,col="blue",lty=3)
-  
+  } 
 }
 
