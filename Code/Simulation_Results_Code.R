@@ -8,7 +8,7 @@ source("<Path>/ATE_Functions.R")
 #******************************************************************************
   
   obs_month=c(1:24) # Total time points of observation : UPDATE ACCORDINGLY
-  M=10 # No. of simulation run : UPDATE ACCORDINGLY (Atleast M=2 for plots)
+  M=1000 # No. of simulation run : UPDATE ACCORDINGLY (Atleast M=2 for plots)
   set.seed(0707) # Random Seed : UPDATE ACCORDINGLY
 
   #Storage Matrix
