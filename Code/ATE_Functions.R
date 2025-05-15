@@ -316,7 +316,7 @@ plot_func=function(obs_data=obs_cost,
   par(mar = c(5,5,4,2))
 
   #Observed cost
-  plot( tot_mon, obs_data ,type="l",lwd=3,lty=1, col=1,
+  plot( tot_mon, obs_data ,type="l",lwd=4,lty=1, col=1,
         main = title,
         xlab="Months",
         ylab=y_lab,
@@ -332,7 +332,7 @@ plot_func=function(obs_data=obs_cost,
       }
   
   #Estimation with IPTW
-  lines(tot_mon,est_iptw, lwd=2,col="red",lty=2) 
+  lines(tot_mon,est_iptw, lwd=5,col="red",lty=2) 
   
   # CI for IPTW
   if (CI_IPTW==1){
@@ -343,7 +343,7 @@ plot_func=function(obs_data=obs_cost,
     lines(tot_mon,ci_U_iptw, lwd=1,col="black",lty=3)
   } 
   if (no_IPTW==1){  #Estimation without IPTW
-  lines(tot_mon,est_no_iptw, lwd=4,col="blue",lty=3)
+  lines(tot_mon,est_no_iptw, lwd=5,col="blue",lty=3)
   } 
 }
 

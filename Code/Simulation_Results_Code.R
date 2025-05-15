@@ -8,7 +8,7 @@ source("<Path>/ATE_Functions.R")
 #******************************************************************************
   
   obs_month=c(1:24) # Total time points of observation : UPDATE ACCORDINGLY
-  M=1000 # No. of simulation run : UPDATE ACCORDINGLY (Atleast M=2 for plots)
+  M=10 # No. of simulation run : UPDATE ACCORDINGLY (Atleast M=2 for plots)
   set.seed(0707) # Random Seed : UPDATE ACCORDINGLY
 
   #Storage Matrix
@@ -52,7 +52,7 @@ source("<Path>/ATE_Functions.R")
                  Delta_t_1=function(t){1.5}, #difference between Trt 1 and Control
                  Delta_t_2=function(t){0.5} #difference between Trt 1 and Control
                  )
-  # save(data_per_month, file = "<path>/data_per_month.RData")
+  # save(data_per_month, file = "<Path>/data_per_month.RData")
 
   # Observed Time points
   #**********************
@@ -157,44 +157,63 @@ source("<Path>/ATE_Functions.R")
 data_sim_results=list(   
 #Monthly
     #Cost
-    est_mon_cost_iptw_trt_0, est_mon_cost_no_iptw_trt_0, true_mon_cost_trt_0,
-    est_mon_cost_iptw_trt_1, est_mon_cost_no_iptw_trt_1, true_mon_cost_trt_1,
-    est_mon_cost_iptw_trt_2, est_mon_cost_no_iptw_trt_2, true_mon_cost_trt_2,	
+  est_mon_cost_iptw_trt_0= est_mon_cost_iptw_trt_0, 
+  est_mon_cost_no_iptw_trt_0= est_mon_cost_no_iptw_trt_0, 
+  true_mon_cost_trt_0= true_mon_cost_trt_0,
+  est_mon_cost_iptw_trt_1= est_mon_cost_iptw_trt_1, 
+  est_mon_cost_no_iptw_trt_1= est_mon_cost_no_iptw_trt_1, 
+  true_mon_cost_trt_1= true_mon_cost_trt_1,
+  est_mon_cost_iptw_trt_2=  est_mon_cost_iptw_trt_2, 
+  est_mon_cost_no_iptw_trt_2= est_mon_cost_no_iptw_trt_2, 
+  true_mon_cost_trt_2= true_mon_cost_trt_2,	
     #Diff
-    est_mon_diff_iptw_trt_1_vs_0, est_mon_diff_iptw_trt_2_vs_1, est_mon_diff_iptw_trt_2_vs_0, 
-    std_mon_diff_iptw_trt_1_vs_0, std_mon_diff_iptw_trt_2_vs_1, std_mon_diff_iptw_trt_2_vs_0, 
-    est_mon_diff_no_iptw_trt_1_vs_0, est_mon_diff_no_iptw_trt_2_vs_1, est_mon_diff_no_iptw_trt_2_vs_0, 
+    est_mon_diff_iptw_trt_1_vs_0= est_mon_diff_iptw_trt_1_vs_0, 
+  est_mon_diff_iptw_trt_2_vs_1= est_mon_diff_iptw_trt_2_vs_1, 
+  est_mon_diff_iptw_trt_2_vs_0= est_mon_diff_iptw_trt_2_vs_0, 
+    est_mon_diff_no_iptw_trt_1_vs_0= est_mon_diff_no_iptw_trt_1_vs_0, 
+  est_mon_diff_no_iptw_trt_2_vs_1= est_mon_diff_no_iptw_trt_2_vs_1, 
+  est_mon_diff_no_iptw_trt_2_vs_0= est_mon_diff_no_iptw_trt_2_vs_0, 
   #Accumulative 
-    #Cost
-    est_acc_cost_iptw_trt_0, est_acc_cost_no_iptw_trt_0, true_acc_cost_trt_0,
-    est_acc_cost_iptw_trt_1, est_acc_cost_no_iptw_trt_1, true_acc_cost_trt_1,
-    est_acc_cost_iptw_trt_2, est_acc_cost_no_iptw_trt_2, true_acc_cost_trt_2,	
-    #Diff
-    est_acc_diff_iptw_trt_1_vs_0, est_acc_diff_iptw_trt_2_vs_1, est_acc_diff_iptw_trt_2_vs_0, 
-    std_acc_diff_iptw_trt_1_vs_0, std_acc_diff_iptw_trt_2_vs_1, std_acc_diff_iptw_trt_2_vs_0, 
-    est_acc_diff_no_iptw_trt_1_vs_0, est_acc_diff_no_iptw_trt_2_vs_1, est_acc_diff_no_iptw_trt_2_vs_0 
-   )
-# save(data_sim_results, file = "<path>/data_sim_results.RData")
-# load ("<path>/data_per_month.RData")
-# load ("<path>/data_sim_results.RData")
+  #Cost
+  est_acc_cost_iptw_trt_0= est_acc_cost_iptw_trt_0, 
+  est_acc_cost_no_iptw_trt_0= est_acc_cost_no_iptw_trt_0, 
+  true_acc_cost_trt_0= true_acc_cost_trt_0,
+  est_acc_cost_iptw_trt_1= est_acc_cost_iptw_trt_1, 
+  est_acc_cost_no_iptw_trt_1= est_acc_cost_no_iptw_trt_1, 
+  true_acc_cost_trt_1= true_acc_cost_trt_1,
+  est_acc_cost_iptw_trt_2=  est_acc_cost_iptw_trt_2, 
+  est_acc_cost_no_iptw_trt_2= est_acc_cost_no_iptw_trt_2, 
+  true_acc_cost_trt_2= true_acc_cost_trt_2,	
+  #Diff
+  est_acc_diff_iptw_trt_1_vs_0= est_acc_diff_iptw_trt_1_vs_0, 
+  est_acc_diff_iptw_trt_2_vs_1= est_acc_diff_iptw_trt_2_vs_1, 
+  est_acc_diff_iptw_trt_2_vs_0= est_acc_diff_iptw_trt_2_vs_0, 
+  est_acc_diff_no_iptw_trt_1_vs_0= est_acc_diff_no_iptw_trt_1_vs_0, 
+  est_acc_diff_no_iptw_trt_2_vs_1= est_acc_diff_no_iptw_trt_2_vs_1, 
+  est_acc_diff_no_iptw_trt_2_vs_0= est_acc_diff_no_iptw_trt_2_vs_0 
+  )
+save(data_sim_results, file = "<Path>/data_sim_results.RData")
+load ("<Path>/data_per_month.RData")
+# load ("<Path>/data_sim_results.RData")
 
 #***********************************************************************
 #                         COST PLOTS                               ####
 #***********************************************************************
 
-setwd("path")
+setwd("<Path>")
+
 pdf("sim_plot.pdf",height = 8,width = 12)
 layout(matrix(c(1:6), ncol=3, byrow = T), heights=c(1,1,1))
 
 # A:
 #*****
-plot_func(obs_data=apply(true_acc_cost_trt_0,1,mean),
-          est_no_iptw=apply(est_acc_cost_no_iptw_trt_0,1,mean),
-          est_iptw=apply(est_acc_cost_iptw_trt_0,1,mean),
+plot_func(obs_data=apply(data_sim_results$true_acc_cost_trt_0,1,mean),
+          est_no_iptw=apply(data_sim_results$est_acc_cost_no_iptw_trt_0,1,mean),
+          est_iptw=apply(data_sim_results$est_acc_cost_iptw_trt_0,1,mean),
           tot_mon=obs_month, title=c("A: Accu cost for Control"), 
           ylim=c(0,12000), y_lab="Cost ($)",
           CI_IPTW=0, # 1 for Yes;
-          std_iptw=apply(est_acc_cost_iptw_trt_0,1,sd),
+          std_iptw=apply(data_sim_results$est_acc_cost_iptw_trt_0,1,sd),
           no_IPTW=1, # 1 for Yes;
           h_abl=0 # 1 for abline-h;
 )
@@ -209,40 +228,40 @@ legend("bottomright",
 
 # B1:
 #*****
-plot_func(obs_data=apply(true_acc_cost_trt_1,1,mean)-
-            apply(true_acc_cost_trt_0,1,mean),
-          est_no_iptw=apply(est_acc_diff_no_iptw_trt_1_vs_0,1,mean),
+plot_func(obs_data=apply(data_sim_results$true_acc_cost_trt_1,1,mean)-
+            apply(data_sim_results$true_acc_cost_trt_0,1,mean),
+          est_no_iptw=apply(data_sim_results$est_acc_diff_no_iptw_trt_1_vs_0,1,mean),
           est_iptw=apply(est_acc_diff_iptw_trt_1_vs_0,1,mean),
           tot_mon=obs_month, title=c("B1: Accu diff: Trt 1 vs Control"), 
           ylim=c(0,15000), y_lab="Cost Diff ($)",
           CI_IPTW=0, # 1 for Yes;
-          std_iptw=apply(est_acc_diff_iptw_trt_1_vs_0,1,sd),
+          std_iptw=apply(data_sim_results$est_acc_diff_iptw_trt_1_vs_0,1,sd),
           no_IPTW=1, # 1 for Yes;
           h_abl=0 # 1 for abline-h;
 )
 # B2:
 #*****
-plot_func(obs_data=apply(true_acc_cost_trt_2,1,mean)-
-            apply(true_acc_cost_trt_0,1,mean),
-          est_no_iptw=apply(est_acc_diff_no_iptw_trt_2_vs_0,1,mean),
-          est_iptw=apply(est_acc_diff_iptw_trt_2_vs_0,1,mean),
+plot_func(obs_data=apply(data_sim_results$true_acc_cost_trt_2,1,mean)-
+            apply(data_sim_results$true_acc_cost_trt_0,1,mean),
+          est_no_iptw=apply(data_sim_results$est_acc_diff_no_iptw_trt_2_vs_0,1,mean),
+          est_iptw=apply(data_sim_results$est_acc_diff_iptw_trt_2_vs_0,1,mean),
           tot_mon=obs_month, title=c("B2: Accu diff: Trt 2 vs Control"), 
           ylim=c(-6000,0), y_lab="Cost Diff ($)",
           CI_IPTW=0, # 1 for Yes;
-          std_iptw=apply(est_acc_diff_iptw_trt_2_vs_0,1,sd),
+          std_iptw=apply(data_sim_results$est_acc_diff_iptw_trt_2_vs_0,1,sd),
           no_IPTW=1, # 1 for Yes;
           h_abl=0 # 1 for abline-h;
 )
 
 # C:
 #*****
-plot_func(obs_data=apply(true_mon_cost_trt_0,1,mean),
-                est_no_iptw=apply(est_mon_cost_no_iptw_trt_0,1,mean),
-                est_iptw=apply(est_mon_cost_iptw_trt_0,1,mean),
+plot_func(obs_data=apply(data_sim_results$true_mon_cost_trt_0,1,mean),
+                est_no_iptw=apply(data_sim_results$est_mon_cost_no_iptw_trt_0,1,mean),
+                est_iptw=apply(data_sim_results$est_mon_cost_iptw_trt_0,1,mean),
                 tot_mon=obs_month, title=c("C: Monthly cost for Control"), 
                 ylim=c(0,2000), y_lab="Cost ($)",
           CI_IPTW=0, # 1 for Yes;
-          std_iptw=apply(est_mon_cost_iptw_trt_0,1,sd),
+          std_iptw=apply(data_sim_results$est_mon_cost_iptw_trt_0,1,sd),
                   no_IPTW=1, # 1 for Yes;
                 h_abl=0 # 1 for abline-h;
 )
@@ -257,27 +276,27 @@ legend("topright",
 
 # D1:
 #*****
-plot_func(obs_data=apply(true_mon_cost_trt_1,1,mean)-
-                      apply(true_mon_cost_trt_0,1,mean),
-                est_no_iptw=apply(est_mon_diff_no_iptw_trt_1_vs_0,1,mean),
-                est_iptw=apply(est_mon_diff_iptw_trt_1_vs_0,1,mean),
+plot_func(obs_data=apply(data_sim_results$true_mon_cost_trt_1,1,mean)-
+                      apply(data_sim_results$true_mon_cost_trt_0,1,mean),
+                est_no_iptw=apply(data_sim_results$est_mon_diff_no_iptw_trt_1_vs_0,1,mean),
+                est_iptw=apply(data_sim_results$est_mon_diff_iptw_trt_1_vs_0,1,mean),
                 tot_mon=obs_month, title=c("D1: Monthly diff: Trt 1 vs Control"), 
                 ylim=c(0,2000), y_lab="Cost Diff ($)",
           CI_IPTW=0, # 1 for Yes;
-          std_iptw=apply(est_mon_diff_iptw_trt_1_vs_0,1,sd),
+          std_iptw=apply(data_sim_results$est_mon_diff_iptw_trt_1_vs_0,1,sd),
           no_IPTW=1, # 1 for Yes;
           h_abl=1 # 1 for abline-h;
 )
 # D2:
 #*****
-plot_func(obs_data=apply(true_mon_cost_trt_2,1,mean)-
-            apply(true_mon_cost_trt_0,1,mean),
-          est_no_iptw=apply(est_mon_diff_no_iptw_trt_2_vs_0,1,mean),
-          est_iptw=apply(est_mon_diff_iptw_trt_2_vs_0,1,mean),
+plot_func(obs_data=apply(data_sim_results$true_mon_cost_trt_2,1,mean)-
+            apply(data_sim_results$true_mon_cost_trt_0,1,mean),
+          est_no_iptw=apply(data_sim_results$est_mon_diff_no_iptw_trt_2_vs_0,1,mean),
+          est_iptw=apply(data_sim_results$est_mon_diff_iptw_trt_2_vs_0,1,mean),
           tot_mon=obs_month, title=c("D2: Monthly diff: Trt 2 vs Control"), 
           ylim=c(-1000,0), y_lab="Cost Diff ($)",
           CI_IPTW=0, # 1 for Yes;
-          std_iptw=apply(est_mon_diff_iptw_trt_2_vs_0,1,sd),
+          std_iptw=apply(data_sim_results$est_mon_diff_iptw_trt_2_vs_0,1,sd),
           no_IPTW=1, # 1 for Yes;
           h_abl=1 # 1 for abline-h;
 )
@@ -291,41 +310,41 @@ Error_mat=matrix((
   round(rbind(
     #Monthly
     #IPTW
-    cbind(mean(apply(abs((est_mon_diff_iptw_trt_1_vs_0)-apply(true_mon_cost_trt_1-true_mon_cost_trt_0,1,mean)),2,max)), #MAE #TRT 1
-          abs(mean(apply(((est_mon_diff_iptw_trt_1_vs_0)-apply(true_mon_cost_trt_1-true_mon_cost_trt_0,1,mean)),2,mean))), #MBE  #TRT 1
-          mean(sqrt(apply(((est_mon_diff_iptw_trt_1_vs_0)-apply(true_mon_cost_trt_1-true_mon_cost_trt_0,1,mean))^2,2,mean))), #RMSE #TRT 1
+    cbind(mean(apply(abs((data_sim_results$est_mon_diff_iptw_trt_1_vs_0)-apply(data_sim_results$true_mon_cost_trt_1-data_sim_results$true_mon_cost_trt_0,1,mean)),2,max)), #MAE #TRT 1
+          abs(mean(apply(((data_sim_results$est_mon_diff_iptw_trt_1_vs_0)-apply(data_sim_results$true_mon_cost_trt_1-data_sim_results$true_mon_cost_trt_0,1,mean)),2,mean))), #MBE  #TRT 1
+          mean(sqrt(apply(((data_sim_results$est_mon_diff_iptw_trt_1_vs_0)-apply(data_sim_results$true_mon_cost_trt_1-data_sim_results$true_mon_cost_trt_0,1,mean))^2,2,mean))), #RMSE #TRT 1
           
-          mean(apply(abs((est_mon_diff_iptw_trt_2_vs_0)-apply(true_mon_cost_trt_2-true_mon_cost_trt_0,1,mean)),2,max)), #MAE #TRT 2
-          abs(mean(apply(((est_mon_diff_iptw_trt_2_vs_0)-apply(true_mon_cost_trt_2-true_mon_cost_trt_0,1,mean)),2,mean))), #MBE  #TRT 2
-          mean(sqrt(apply(((est_mon_diff_iptw_trt_2_vs_0)-apply(true_mon_cost_trt_2-true_mon_cost_trt_0,1,mean))^2,2,mean))) #RMSE #TRT 2
+          mean(apply(abs((data_sim_results$est_mon_diff_iptw_trt_2_vs_0)-apply(data_sim_results$true_mon_cost_trt_2-data_sim_results$true_mon_cost_trt_0,1,mean)),2,max)), #MAE #TRT 2
+          abs(mean(apply(((data_sim_results$est_mon_diff_iptw_trt_2_vs_0)-apply(data_sim_results$true_mon_cost_trt_2-data_sim_results$true_mon_cost_trt_0,1,mean)),2,mean))), #MBE  #TRT 2
+          mean(sqrt(apply(((data_sim_results$est_mon_diff_iptw_trt_2_vs_0)-apply(data_sim_results$true_mon_cost_trt_2-data_sim_results$true_mon_cost_trt_0,1,mean))^2,2,mean))) #RMSE #TRT 2
     ),
     #No IPTW
-    cbind(mean(apply(abs((est_mon_diff_no_iptw_trt_1_vs_0)-apply(true_mon_cost_trt_1-true_mon_cost_trt_0,1,mean)),2,max)), #MAE #TRT 1
-          abs(mean(apply(((est_mon_diff_no_iptw_trt_1_vs_0)-apply(true_mon_cost_trt_1-true_mon_cost_trt_0,1,mean)),2,mean))), #MBE  #TRT 1
-          mean(sqrt(apply(((est_mon_diff_no_iptw_trt_1_vs_0)-apply(true_mon_cost_trt_1-true_mon_cost_trt_0,1,mean))^2,2,mean))), #RMSE #TRT 1
+    cbind(mean(apply(abs((data_sim_results$est_mon_diff_no_iptw_trt_1_vs_0)-apply(data_sim_results$true_mon_cost_trt_1-data_sim_results$true_mon_cost_trt_0,1,mean)),2,max)), #MAE #TRT 1
+          abs(mean(apply(((data_sim_results$est_mon_diff_no_iptw_trt_1_vs_0)-apply(data_sim_results$true_mon_cost_trt_1-data_sim_results$true_mon_cost_trt_0,1,mean)),2,mean))), #MBE  #TRT 1
+          mean(sqrt(apply(((data_sim_results$est_mon_diff_no_iptw_trt_1_vs_0)-apply(data_sim_results$true_mon_cost_trt_1-data_sim_results$true_mon_cost_trt_0,1,mean))^2,2,mean))), #RMSE #TRT 1
           
-          mean(apply(abs((est_mon_diff_no_iptw_trt_2_vs_0)-apply(true_mon_cost_trt_2-true_mon_cost_trt_0,1,mean)),2,max)), #MAE #TRT 2
-          abs(mean(apply(((est_mon_diff_no_iptw_trt_2_vs_0)-apply(true_mon_cost_trt_2-true_mon_cost_trt_0,1,mean)),2,mean))), #MBE  #TRT 2
-          mean(sqrt(apply(((est_mon_diff_no_iptw_trt_2_vs_0)-apply(true_mon_cost_trt_2-true_mon_cost_trt_0,1,mean))^2,2,mean))) #RMSE #TRT 2
+          mean(apply(abs((data_sim_results$est_mon_diff_no_iptw_trt_2_vs_0)-apply(data_sim_results$true_mon_cost_trt_2-data_sim_results$true_mon_cost_trt_0,1,mean)),2,max)), #MAE #TRT 2
+          abs(mean(apply(((data_sim_results$est_mon_diff_no_iptw_trt_2_vs_0)-apply(data_sim_results$true_mon_cost_trt_2-data_sim_results$true_mon_cost_trt_0,1,mean)),2,mean))), #MBE  #TRT 2
+          mean(sqrt(apply(((data_sim_results$est_mon_diff_no_iptw_trt_2_vs_0)-apply(data_sim_results$true_mon_cost_trt_2-data_sim_results$true_mon_cost_trt_0,1,mean))^2,2,mean))) #RMSE #TRT 2
     ),
     #Accumulative
     #IPTW
-    cbind(mean(apply(abs((est_acc_diff_iptw_trt_1_vs_0)-apply(true_acc_cost_trt_1-true_acc_cost_trt_0,1,mean)),2,max)), #MAE #TRT 1
-          abs(mean(apply(((est_acc_diff_iptw_trt_1_vs_0)-apply(true_acc_cost_trt_1-true_acc_cost_trt_0,1,mean)),2,mean))), #MBE  #TRT 1
-          mean(sqrt(apply(((est_acc_diff_iptw_trt_1_vs_0)-apply(true_acc_cost_trt_1-true_acc_cost_trt_0,1,mean))^2,2,mean))), #RMSE #TRT 1
+    cbind(mean(apply(abs((data_sim_results$est_acc_diff_iptw_trt_1_vs_0)-apply(true_acc_cost_trt_1-true_acc_cost_trt_0,1,mean)),2,max)), #MAE #TRT 1
+          abs(mean(apply(((data_sim_results$est_acc_diff_iptw_trt_1_vs_0)-apply(true_acc_cost_trt_1-true_acc_cost_trt_0,1,mean)),2,mean))), #MBE  #TRT 1
+          mean(sqrt(apply(((data_sim_results$est_acc_diff_iptw_trt_1_vs_0)-apply(true_acc_cost_trt_1-true_acc_cost_trt_0,1,mean))^2,2,mean))), #RMSE #TRT 1
           
-          mean(apply(abs((est_acc_diff_iptw_trt_2_vs_0)-apply(true_acc_cost_trt_2-true_acc_cost_trt_0,1,mean)),2,max)), #MAE #TRT 2
-          abs(mean(apply(((est_acc_diff_iptw_trt_2_vs_0)-apply(true_acc_cost_trt_2-true_acc_cost_trt_0,1,mean)),2,mean))), #MBE  #TRT 2
-          mean(sqrt(apply(((est_acc_diff_iptw_trt_2_vs_0)-apply(true_acc_cost_trt_2-true_acc_cost_trt_0,1,mean))^2,2,mean))) #RMSE #TRT 2
+          mean(apply(abs((data_sim_results$est_acc_diff_iptw_trt_2_vs_0)-apply(true_acc_cost_trt_2-true_acc_cost_trt_0,1,mean)),2,max)), #MAE #TRT 2
+          abs(mean(apply(((data_sim_results$est_acc_diff_iptw_trt_2_vs_0)-apply(true_acc_cost_trt_2-true_acc_cost_trt_0,1,mean)),2,mean))), #MBE  #TRT 2
+          mean(sqrt(apply(((data_sim_results$est_acc_diff_iptw_trt_2_vs_0)-apply(true_acc_cost_trt_2-true_acc_cost_trt_0,1,mean))^2,2,mean))) #RMSE #TRT 2
     ),
     #No IPTW
-    cbind(mean(apply(abs((est_acc_diff_no_iptw_trt_1_vs_0)-apply(true_acc_cost_trt_1-true_acc_cost_trt_0,1,mean)),2,max)), #MAE #TRT 1
-          abs(mean(apply(((est_acc_diff_no_iptw_trt_1_vs_0)-apply(true_acc_cost_trt_1-true_acc_cost_trt_0,1,mean)),2,mean))), #MBE  #TRT 1
-          mean(sqrt(apply(((est_acc_diff_no_iptw_trt_1_vs_0)-apply(true_acc_cost_trt_1-true_acc_cost_trt_0,1,mean))^2,2,mean))), #RMSE #TRT 1
+    cbind(mean(apply(abs((data_sim_results$est_acc_diff_no_iptw_trt_1_vs_0)-apply(true_acc_cost_trt_1-true_acc_cost_trt_0,1,mean)),2,max)), #MAE #TRT 1
+          abs(mean(apply(((data_sim_results$est_acc_diff_no_iptw_trt_1_vs_0)-apply(true_acc_cost_trt_1-true_acc_cost_trt_0,1,mean)),2,mean))), #MBE  #TRT 1
+          mean(sqrt(apply(((data_sim_results$est_acc_diff_no_iptw_trt_1_vs_0)-apply(true_acc_cost_trt_1-true_acc_cost_trt_0,1,mean))^2,2,mean))), #RMSE #TRT 1
           
-          mean(apply(abs((est_acc_diff_no_iptw_trt_2_vs_0)-apply(true_acc_cost_trt_2-true_acc_cost_trt_0,1,mean)),2,max)), #MAE #TRT 2
-          abs(mean(apply(((est_acc_diff_no_iptw_trt_2_vs_0)-apply(true_acc_cost_trt_2-true_acc_cost_trt_0,1,mean)),2,mean))), #MBE  #TRT 2
-          mean(sqrt(apply(((est_acc_diff_no_iptw_trt_2_vs_0)-apply(true_acc_cost_trt_2-true_acc_cost_trt_0,1,mean))^2,2,mean))) #RMSE #TRT 2
+          mean(apply(abs((data_sim_results$est_acc_diff_no_iptw_trt_2_vs_0)-apply(true_acc_cost_trt_2-true_acc_cost_trt_0,1,mean)),2,max)), #MAE #TRT 2
+          abs(mean(apply(((data_sim_results$est_acc_diff_no_iptw_trt_2_vs_0)-apply(true_acc_cost_trt_2-true_acc_cost_trt_0,1,mean)),2,mean))), #MBE  #TRT 2
+          mean(sqrt(apply(((data_sim_results$est_acc_diff_no_iptw_trt_2_vs_0)-apply(true_acc_cost_trt_2-true_acc_cost_trt_0,1,mean))^2,2,mean))) #RMSE #TRT 2
     )
   ),2)),
   ncol=6,
