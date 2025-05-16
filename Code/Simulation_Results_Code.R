@@ -20,7 +20,6 @@ source("<Path>/ATE_Functions.R")
     est_mon_cost_iptw_trt_2 <- est_mon_cost_no_iptw_trt_2 <- true_mon_cost_trt_2 <-	
     #Diff
     est_mon_diff_iptw_trt_1_vs_0 <- est_mon_diff_iptw_trt_2_vs_1 <- est_mon_diff_iptw_trt_2_vs_0 <- 
-    std_mon_diff_iptw_trt_1_vs_0 <- std_mon_diff_iptw_trt_2_vs_1 <- std_mon_diff_iptw_trt_2_vs_0 <- 
     est_mon_diff_no_iptw_trt_1_vs_0 <- est_mon_diff_no_iptw_trt_2_vs_1 <- est_mon_diff_no_iptw_trt_2_vs_0 <- 
   #Accumulative 
     #Cost
@@ -29,7 +28,6 @@ source("<Path>/ATE_Functions.R")
     est_acc_cost_iptw_trt_2 <- est_acc_cost_no_iptw_trt_2 <- true_acc_cost_trt_2 <-	
     #Diff
     est_acc_diff_iptw_trt_1_vs_0 <- est_acc_diff_iptw_trt_2_vs_1 <- est_acc_diff_iptw_trt_2_vs_0 <- 
-    std_acc_diff_iptw_trt_1_vs_0 <- std_acc_diff_iptw_trt_2_vs_1 <- std_acc_diff_iptw_trt_2_vs_0 <- 
     est_acc_diff_no_iptw_trt_1_vs_0 <- est_acc_diff_no_iptw_trt_2_vs_1 <- est_acc_diff_no_iptw_trt_2_vs_0 <- 
 
     matrix(NA,nrow=length(obs_month),ncol=M)
@@ -343,4 +341,5 @@ Error_mat=matrix((
   dimnames=list(c(paste0(rep(c("Mon_", "Acc_"),each=2), rep(c("IPTW", "No_IPTW"),2))),
   c(paste0(rep(c("Del1_", "Del2_"),each=3),c("MAE","MBE","RMSE"))))
 )
+#Display Error
 Error_mat
