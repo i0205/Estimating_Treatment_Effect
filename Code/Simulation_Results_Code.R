@@ -203,47 +203,39 @@ setwd("<Path>")
 pdf("sim_plot.pdf",height = 8,width = 12)
 layout(matrix(c(1:6), ncol=3, byrow = T), heights=c(1,1,1))
 
-# A:
+# A1:
 #*****
 plot_func(obs_data=apply(data_sim_results$true_acc_cost_trt_0,1,mean),
           est_no_iptw=apply(data_sim_results$est_acc_cost_no_iptw_trt_0,1,mean),
           est_iptw=apply(data_sim_results$est_acc_cost_iptw_trt_0,1,mean),
-          tot_mon=obs_month, title=c("A: Accu cost for Control"), 
+          tot_mon=obs_month, title=c("A1: Accu cost for Control"), 
           ylim=c(0,12000), y_lab="Cost ($)",
           CI_IPTW=0, # 1 for Yes;
           std_iptw=apply(data_sim_results$est_acc_cost_iptw_trt_0,1,sd),
           no_IPTW=1, # 1 for Yes;
           h_abl=0 # 1 for abline-h;
 )
-# Add a legend
-legend("bottomright", 
-       legend=c("Simulated",
-                "Estimate with IPTW",
-                "Estimate without IPTW"),
-       col=c("black", "red", "blue"),
-       lty=c(1,2,3),lwd=c(4,5,5),
-       pt.cex = 2,cex=1.25)
 
-# B1:
+# A2:
 #*****
 plot_func(obs_data=apply(data_sim_results$true_acc_cost_trt_1,1,mean)-
             apply(data_sim_results$true_acc_cost_trt_0,1,mean),
           est_no_iptw=apply(data_sim_results$est_acc_diff_no_iptw_trt_1_vs_0,1,mean),
           est_iptw=apply(data_sim_results$est_acc_diff_iptw_trt_1_vs_0,1,mean),
-          tot_mon=obs_month, title=c("B1: Accu diff: Trt 1 vs Control"), 
+          tot_mon=obs_month, title=c("A2: Accu diff: Trt 1 vs Control"), 
           ylim=c(0,15000), y_lab="Cost Diff ($)",
           CI_IPTW=0, # 1 for Yes;
           std_iptw=apply(data_sim_results$est_acc_diff_iptw_trt_1_vs_0,1,sd),
           no_IPTW=1, # 1 for Yes;
           h_abl=0 # 1 for abline-h;
 )
-# B2:
+# A3:
 #*****
 plot_func(obs_data=apply(data_sim_results$true_acc_cost_trt_2,1,mean)-
             apply(data_sim_results$true_acc_cost_trt_0,1,mean),
           est_no_iptw=apply(data_sim_results$est_acc_diff_no_iptw_trt_2_vs_0,1,mean),
           est_iptw=apply(data_sim_results$est_acc_diff_iptw_trt_2_vs_0,1,mean),
-          tot_mon=obs_month, title=c("B2: Accu diff: Trt 2 vs Control"), 
+          tot_mon=obs_month, title=c("A3: Accu diff: Trt 2 vs Control"), 
           ylim=c(-6000,0), y_lab="Cost Diff ($)",
           CI_IPTW=0, # 1 for Yes;
           std_iptw=apply(data_sim_results$est_acc_diff_iptw_trt_2_vs_0,1,sd),
@@ -251,39 +243,47 @@ plot_func(obs_data=apply(data_sim_results$true_acc_cost_trt_2,1,mean)-
           h_abl=0 # 1 for abline-h;
 )
 
-# C:
+# B1:
 #*****
 plot_func(obs_data=apply(data_sim_results$true_mon_cost_trt_0,1,mean),
-                est_no_iptw=apply(data_sim_results$est_mon_cost_no_iptw_trt_0,1,mean),
-                est_iptw=apply(data_sim_results$est_mon_cost_iptw_trt_0,1,mean),
-                tot_mon=obs_month, title=c("C: Monthly cost for Control"), 
-                ylim=c(0,2000), y_lab="Cost ($)",
+          est_no_iptw=apply(data_sim_results$est_mon_cost_no_iptw_trt_0,1,mean),
+          est_iptw=apply(data_sim_results$est_mon_cost_iptw_trt_0,1,mean),
+          tot_mon=obs_month, title=c("B1: Monthly cost for Control"), 
+          ylim=c(0,2000), y_lab="Cost ($)",
           CI_IPTW=0, # 1 for Yes;
           std_iptw=apply(data_sim_results$est_mon_cost_iptw_trt_0,1,sd),
-                  no_IPTW=1, # 1 for Yes;
-                h_abl=0 # 1 for abline-h;
+          no_IPTW=1, # 1 for Yes;
+          h_abl=0 # 1 for abline-h;
 )
 
-# D1:
+# Add a legend
+legend("topright", 
+       legend=c("True values",
+                "Estimate with IPTW",
+                "Estimate without IPTW"),
+       col=c("black", "red", "blue"),
+       lty=c(1,2,3),lwd=c(4,5,5),
+       pt.cex = 2,cex=1.5)
+# B2:
 #*****
 plot_func(obs_data=apply(data_sim_results$true_mon_cost_trt_1,1,mean)-
-                      apply(data_sim_results$true_mon_cost_trt_0,1,mean),
-                est_no_iptw=apply(data_sim_results$est_mon_diff_no_iptw_trt_1_vs_0,1,mean),
-                est_iptw=apply(data_sim_results$est_mon_diff_iptw_trt_1_vs_0,1,mean),
-                tot_mon=obs_month, title=c("D1: Monthly diff: Trt 1 vs Control"), 
-                ylim=c(0,2000), y_lab="Cost Diff ($)",
+            apply(data_sim_results$true_mon_cost_trt_0,1,mean),
+          est_no_iptw=apply(data_sim_results$est_mon_diff_no_iptw_trt_1_vs_0,1,mean),
+          est_iptw=apply(data_sim_results$est_mon_diff_iptw_trt_1_vs_0,1,mean),
+          tot_mon=obs_month, title=c("B2: Monthly diff: Trt 1 vs Control"), 
+          ylim=c(0,2000), y_lab="Cost Diff ($)",
           CI_IPTW=0, # 1 for Yes;
           std_iptw=apply(data_sim_results$est_mon_diff_iptw_trt_1_vs_0,1,sd),
           no_IPTW=1, # 1 for Yes;
           h_abl=0 # 1 for abline-h;
 )
-# D2:
+# B3:
 #*****
 plot_func(obs_data=apply(data_sim_results$true_mon_cost_trt_2,1,mean)-
             apply(data_sim_results$true_mon_cost_trt_0,1,mean),
           est_no_iptw=apply(data_sim_results$est_mon_diff_no_iptw_trt_2_vs_0,1,mean),
           est_iptw=apply(data_sim_results$est_mon_diff_iptw_trt_2_vs_0,1,mean),
-          tot_mon=obs_month, title=c("D2: Monthly diff: Trt 2 vs Control"), 
+          tot_mon=obs_month, title=c("B3: Monthly diff: Trt 2 vs Control"), 
           ylim=c(-1000,0), y_lab="Cost Diff ($)",
           CI_IPTW=0, # 1 for Yes;
           std_iptw=apply(data_sim_results$est_mon_diff_iptw_trt_2_vs_0,1,sd),
@@ -291,6 +291,7 @@ plot_func(obs_data=apply(data_sim_results$true_mon_cost_trt_2,1,mean)-
           h_abl=0 # 1 for abline-h;
 )
 dev.off()
+
 
 #***********************************************************************
 #        Performance Matrix Calculation                             ####
